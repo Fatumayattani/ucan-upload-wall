@@ -1,21 +1,19 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx src/index.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "@ipld/dag-ucan": "^3.4.5",
-    "@storacha/client": "^1.8.2",
-    "dotenv": "^17.2.3"
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5",
+    "@storacha/client": "^1.8.2"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "tsx": "^4.7.1",
+    "typescript": "^5.5.3",
+    "@types/node": "^20.11.30",
+    "@types/express": "^4.17.21"
   }
 }
