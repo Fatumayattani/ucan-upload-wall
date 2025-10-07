@@ -38,7 +38,9 @@ This project has two parts:
 
   ```bash
   storacha login
+  ````
   storacha space create
+  ````
   storacha space ls
   ```
 
