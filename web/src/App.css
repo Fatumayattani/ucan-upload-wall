@@ -1,42 +1,78 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
+.page {
+  font-family: system-ui, sans-serif;
+  background-color: #fafafa;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   padding: 2rem;
+}
+
+.topbar {
   text-align: center;
+  margin-bottom: 2rem;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  width: 80px;
+  height: auto;
+  margin-bottom: 0.5rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.subtitle {
+  max-width: 600px;
+  margin: 0 auto;
+  color: #666;
+  font-size: 0.95rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.upload-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
 }
 
-.card {
-  padding: 2em;
+.upload-btn {
+  background: #7e22ce;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
-.read-the-docs {
+.upload-btn:hover {
+  background: #6b21a8;
+}
+
+.results {
+  margin-top: 1.5rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.results a {
+  display: block;
+  color: #7e22ce;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.results a:hover {
+  text-decoration: underline;
+}
+
+.footer {
+  margin-top: 3rem;
+  font-size: 0.8rem;
   color: #888;
 }

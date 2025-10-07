@@ -1,12 +1,6 @@
 # 🪶 UCAN Upload Wall  
 **A simple, UCAN-powered upload wall built on the Storacha Network**
 
-<p align="center">
-  <img src="https://storacha.network/assets/logo.svg" width="180" alt="Storacha Logo" />
-</p>
-
----
-
 ## 🌐 Overview  
 
 **UCAN Upload Wall** is a demo that showcases **User-Controlled Authorization Networks (UCANs)** in action through the [Storacha Network](https://storacha.network).  
@@ -48,7 +42,6 @@ This project has two parts:
   storacha space ls
   ```
 
----
 
 ### 🧱 Folder Structure
 
@@ -81,7 +74,6 @@ PROOF_B64=<your-delegation-proof-string>
 PORT=8787
 ```
 
----
 
 ## 🧪 Test Upload
 
@@ -162,7 +154,6 @@ graph TD
   F -->|Proof Stored| B1
 ```
 
----
 
 ## 🔑 Key Concepts
 
@@ -182,7 +173,7 @@ graph TD
 * ✅ Storacha client integration
 * ✅ Upload endpoint returning CIDs
 * ✅ TypeScript + Express backend
-* 🧩 Frontend (Upload Wall UI) coming next
+* ✅ Frontend (Upload Wall UI)
 
 ---
 

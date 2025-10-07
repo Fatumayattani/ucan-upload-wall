@@ -1,62 +1,54 @@
 import express from "express";
+import cors from "cors";
+import multer from "multer";
 import dotenv from "dotenv";
 import fs from "fs";
-import path from "path";
-import * as Client from "@storacha/client";
-import * as Delegation from "@storacha/client/delegation";
+import { Client, Agent, Delegation } from "@storacha/client";
 
 dotenv.config();
 
 const app = express();
-app.use(express.json());
+app.use(cors());
+const upload = multer({ dest: "uploads/" });
+const port = process.env.PORT || 8080;
 
-const PORT = process.env.PORT || 8787;
-
-/**
- * POST /api/upload
- * Uploads a simple test blob to Storacha using your UCAN proof and agent.
- */
-app.post("/api/upload", async (_req, res) => {
+app.post("/api/upload", upload.single("file"), async (req, res) => {
   try {
-    // Load proof file (CAR UCAN delegation)
-    const proofPath = path.resolve(process.env.HOME || ".", "space-proof.car");
-    const proofBytes = fs.readFileSync(proofPath);
+    console.log("📤 Incoming upload request...");
 
-    // Parse UCAN delegation
-    const delegation = await Delegation.extract(new Uint8Array(proofBytes));
-    if (!delegation.ok) {
-      throw new Error(`Failed to extract delegation: ${delegation.error}`);
+    // 1️⃣ Validate env vars
+    const key = process.env.KEY?.trim();
+    const proofB64 = process.env.PROOF_B64?.trim();
+    if (!key || !proofB64) {
+      throw new Error("Missing KEY or PROOF_B64 in .env");
     }
 
-    // Create Storacha client (auto-generates local Agent)
-    const client = await Client.create();
+    // 2️⃣ Decode UCAN proof
+    const proofBytes = Buffer.from(proofB64, "base64");
+    const delegation = await Delegation.extract(new Uint8Array(proofBytes));
+    if (!delegation.ok) throw new Error(`Invalid proof: ${delegation.error}`);
 
-    // Attach the proof (UCAN delegation)
-    await client.addProof(delegation.ok);
+    // 3️⃣ Create agent + client
+    const agent = await Agent.fromSecret(key);
+    const client = new Client({ agent });
 
-    // Upload a simple file
-    c// Upload a simple file
-const data = new Blob(["Hello from UCAN Upload Wall!"], { type: "text/plain" });
+    // 4️⃣ Attach proof
+    await client.agent.addProofs([delegation.ok]);
 
-// Just upload the blob itself — the name isn’t passed here anymore
-const result = await client.uploadFile(data);
+    // 5️⃣ Upload file
+    if (!req.file) throw new Error("No file uploaded");
+    const fileBuffer = fs.readFileSync(req.file.path);
+    const data = new Blob([fileBuffer]);
+    const result = await client.uploadFile(data);
 
-res.json({
-  ok: true,
-  cid: result.toString(),
-});
-
-
+    console.log("✅ Uploaded CID:", result.toString());
+    res.json({ ok: true, cid: result.toString() });
   } catch (err: any) {
-    console.error("Upload failed:", err);
+    console.error("❌ Upload failed:", err);
     res.status(500).json({ ok: false, error: err.message });
   }
 });
 
-/**
- * Start server
- */
-app.listen(PORT, () => {
-  console.log(`🚀 UCAN Upload Wall backend running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`🚀 UCAN Upload Wall backend running on port ${port}`);
 });
-
