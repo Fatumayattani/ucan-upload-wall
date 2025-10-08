@@ -1,96 +1,73 @@
-import { useState } from "react";
-import storachaLogo from "./assets/logo.webp";
-import "./App.css";
+import { useState, useCallback } from 'react';
+import { Header } from './components/Header';
+import { UploadZone } from './components/UploadZone';
+import { FileList } from './components/FileList';
+import { Alert } from './components/Alert';
+import { useFileUpload } from './hooks/useFileUpload';
+import { UploadedFile } from './types/upload';
 
 function App() {
-  const [files, setFiles] = useState<File[]>([]);
-  const [cids, setCids] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const { uploadFile, isUploading, error } = useFileUpload();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) setFiles(Array.from(e.target.files));
-  };
+  const handleFileSelect = useCallback(async (file: File) => {
+    const result = await uploadFile(file);
 
-  const handleUpload = async () => {
-    if (!files.length) return;
-    setLoading(true);
-    setError("");
+    if (result && result.ok) {
+      const newFile: UploadedFile = {
+        id: crypto.randomUUID(),
+        cid: result.cid,
+        filename: file.name,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+      };
 
-    try {
-      const formData = new FormData();
-      formData.append("file", files[0]);
-
-      const response = await fetch("http://localhost:8080/api/upload", {
-        method: "POST",
-        body: formData,
+      setUploadedFiles(prev => [newFile, ...prev]);
+      setAlert({
+        type: 'success',
+        message: `Successfully uploaded ${file.name}!`,
       });
-
-      const data = await response.json();
-
-      if (data.ok && data.cid) {
-        setCids((prev) => [data.cid, ...prev]);
-        setFiles([]);
-      } else throw new Error(data.error || "Upload failed");
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    } else if (error) {
+      setAlert({
+        type: 'error',
+        message: error,
+      });
     }
-  };
+  }, [uploadFile, error]);
+
+  const handleCloseAlert = useCallback(() => {
+    setAlert(null);
+  }, []);
 
   return (
-    <div className="page">
-      <header className="topbar">
-        <img src={storachaLogo} alt="Storacha Logo" className="logo" />
-        <h1>UCAN Upload Wall</h1>
-        <p className="subtitle">
-          A minimal dApp powered by <strong>Storacha</strong> and{" "}
-          <strong>UCAN</strong> — upload files without API keys, just delegated
-          capabilities.
-        </p>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <Header />
 
-      <main className="main-section">
-        <div className="upload-box">
-          <div className="drop-area">
-            <input type="file" onChange={handleFileChange} />
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex flex-col items-center">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-3">
+              Upload with Confidence
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl">
+              Experience decentralized storage powered by UCAN authorization.
+              Your files are secured through cryptographic capabilities, not centralized tokens.
+            </p>
           </div>
 
-          <button
-            onClick={handleUpload}
-            disabled={!files.length || loading}
-            className="upload-btn"
-          >
-            {loading ? "⏳ Uploading..." : "🚀 Upload to Storacha"}
-          </button>
-
-          {error && <p className="error">{error}</p>}
-
-          {cids.length > 0 && (
-            <div className="results">
-              <h3>Uploaded Files</h3>
-              {cids.map((cid, i) => (
-                <a
-                  key={i}
-                  href={`https://storacha.link/ipfs/${cid}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {cid}
-                </a>
-              ))}
-            </div>
-          )}
+          <UploadZone onFileSelect={handleFileSelect} isUploading={isUploading} />
+          <FileList files={uploadedFiles} />
         </div>
       </main>
 
-      <footer className="footer">
-        <p>
-          Built with 💜 by <strong>Fatuma Yattani</strong> · Powered by{" "}
-          <strong>Storacha Network</strong> · UCAN Authorization
-        </p>
-      </footer>
+      {alert && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={handleCloseAlert}
+        />
+      )}
     </div>
   );
 }
