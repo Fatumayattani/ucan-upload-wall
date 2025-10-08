@@ -14,13 +14,11 @@ A modern, decentralized file upload application powered by **User-Controlled Aut
 - [Overview](#overview)
 - [Key Features](#key-features)
 - [Architecture](#architecture)
-- [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
 - [How It Works](#how-it-works)
 - [UCAN Flow Diagram](#ucan-flow-diagram)
 - [Component Architecture](#component-architecture)
-- [API Integration](#api-integration)
 - [Development](#development)
 - [Security](#security)
 - [Contributing](#contributing)
@@ -146,34 +144,6 @@ Files uploaded through this interface are stored on **Filecoin** via the **Stora
 
 ---
 
-## 🛠️ Tech Stack
-
-### Frontend
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **React** | 18.3.1 | UI framework |
-| **TypeScript** | 5.5.3 | Type safety |
-| **Vite** | 5.4.2 | Build tool & dev server |
-| **Tailwind CSS** | 3.4.1 | Styling |
-| **Lucide React** | 0.344.0 | Icon library |
-
-### Backend (Separate Repository)
-
-| Technology | Purpose |
-|------------|---------|
-| **Node.js** | Runtime |
-| **Express** | Web framework |
-| **@storacha/client** | UCAN & Storacha integration |
-| **TypeScript** | Type safety |
-
-### Infrastructure
-
-- **Storacha Network**: UCAN-based storage gateway
-- **Filecoin**: Decentralized storage network
-- **IPFS**: Content addressing & retrieval
-
----
 
 ## 📁 Project Structure
 
@@ -222,7 +192,7 @@ ucan-upload-wall/
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/ucan-upload-wall.git
+git clone https://github.com/Fatumayattani/ucan-upload-wall.git
 cd ucan-upload-wall
 ```
 
@@ -396,50 +366,6 @@ App
 - Manages upload state
 - Error handling
 - API communication
-
----
-
-## 🔌 API Integration
-
-### Backend Endpoint
-
-**POST** `/api/upload`
-
-**Request:**
-```http
-POST http://localhost:8787/api/upload
-Content-Type: multipart/form-data
-
-file: [binary file data]
-```
-
-**Response (Success):**
-```json
-{
-  "ok": true,
-  "cid": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi"
-}
-```
-
-**Response (Error):**
-```json
-{
-  "ok": false,
-  "error": "Upload failed: Invalid UCAN proof"
-}
-```
-
-### IPFS Gateway Access
-
-Files can be accessed via:
-```
-https://w3s.link/ipfs/{CID}
-```
-
-Example:
-```
-https://w3s.link/ipfs/bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi
-```
 
 ---
 

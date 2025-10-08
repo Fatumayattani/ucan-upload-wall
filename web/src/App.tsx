@@ -48,11 +48,11 @@ function App() {
         <div className="flex flex-col items-center">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-3">
-              Upload with Confidence
+              Store it your way
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl">
-              Experience decentralized storage powered by UCAN authorization.
-              Your files are secured through cryptographic capabilities, not centralized tokens.
+              Upload files directly to the Storacha network with UCAN authorization.
+  Your data stays verifiable, private, and under your control — no tokens, no intermediaries.
             </p>
           </div>
 

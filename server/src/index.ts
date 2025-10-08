@@ -71,5 +71,5 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`🚀 UCAN Upload Wall backend running on port ${port}`);
+  console.log(` UCAN Upload Wall backend running on port ${port}`);
 });
