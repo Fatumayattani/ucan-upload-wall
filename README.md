@@ -1,213 +1,588 @@
-# 🪶 UCAN Upload Wall  
-**A simple, UCAN-powered upload wall built on the Storacha Network**
+# 🔐 UCAN Upload Wall
 
-## 🌐 Overview  
+A modern, decentralized file upload application powered by **User-Controlled Authorization Networks (UCANs)** and the **Storacha Network**. This project demonstrates how to build secure, token-free file storage using capability-based authorization instead of traditional API keys.
 
-**UCAN Upload Wall** is a demo that showcases **User-Controlled Authorization Networks (UCANs)** in action through the [Storacha Network](https://storacha.network).  
-It demonstrates how users can securely upload files using delegated capabilities — no API keys, no centralized tokens.  
-
-This project has two parts:  
-- **Server:** Handles UCAN delegation and uploads using `@storacha/client`  
-- **Web:** Frontend interface for file uploads and listing (coming next)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![React](https://img.shields.io/badge/react-18.3.1-61dafb.svg)
+![TypeScript](https://img.shields.io/badge/typescript-5.5.3-3178c6.svg)
+![Vite](https://img.shields.io/badge/vite-5.4.2-646cff.svg)
 
 ---
 
-## 🧩 Tech Stack  
+## 📋 Table of Contents
 
-| Layer | Stack |
-|-------|-------|
-| Authorization | UCAN (User Controlled Authorization Networks) |
-| Network | Storacha Network |
-| Backend | Node.js (TypeScript + Express + dotenv) |
-| Frontend | React + Vite (TypeScript) |
-| Storage | Filecoin via Storacha |
-| Architecture | UCAN Delegation Flow |
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [How It Works](#how-it-works)
+- [UCAN Flow Diagram](#ucan-flow-diagram)
+- [Component Architecture](#component-architecture)
+- [API Integration](#api-integration)
+- [Development](#development)
+- [Security](#security)
+- [Contributing](#contributing)
+- [Resources](#resources)
+- [License](#license)
 
 ---
 
-## ⚙️ Setup & Run
+## 🌐 Overview
 
-### 🪄 Prerequisites
-- Node.js ≥ 18  
-- Storacha CLI  
-  ```bash
-  npm install -g @storacha/cli
-````
+UCAN Upload Wall is a demonstration of decentralized file storage using **User-Controlled Authorization Networks (UCANs)**. Instead of relying on centralized API keys or bearer tokens, this application uses cryptographic capabilities to securely delegate upload permissions.
 
-* Storacha account & space
+Files uploaded through this interface are stored on **Filecoin** via the **Storacha Network**, ensuring permanent, verifiable, and decentralized storage.
 
-  ```bash
-  storacha login
-  ````
-  storacha space create
-  ````
-  storacha space ls
-  ```
+### What Makes This Different?
 
+- **No API Keys**: Authorization is handled through UCAN proofs
+- **Decentralized**: Files are stored on Filecoin via Storacha
+- **Capability-Based**: Fine-grained permission delegation
+- **Content Addressing**: Each file gets a unique CID (Content Identifier)
+- **Cryptographically Secure**: All permissions are verified through UCAN chains
 
-### 🧱 Folder Structure
+---
+
+## ✨ Key Features
+
+- 🎯 **Drag & Drop Upload**: Intuitive file upload interface
+- 🔗 **Content Addressing**: Every file gets a unique CID
+- 📋 **Upload History**: Track all uploaded files
+- 📎 **Easy Sharing**: Copy CID or view files via IPFS gateway
+- 🎨 **Modern UI**: Clean, responsive design with Tailwind CSS
+- ⚡ **Fast**: Built with Vite for optimal performance
+- 🔒 **UCAN Authorization**: Secure, token-free authentication
+- 📱 **Responsive**: Works seamlessly on all devices
+
+---
+
+## 🏗️ Architecture
+
+### High-Level Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        User Browser                         │
+│                     (React + Vite App)                      │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+                       │ HTTP Request (FormData)
+                       ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Backend Server                           │
+│              (Express + TypeScript)                         │
+│                                                             │
+│  ┌──────────────────────────────────────────────┐          │
+│  │         UCAN Agent (DID + Private Key)        │          │
+│  └──────────────────────────────────────────────┘          │
+│                       │                                     │
+│  ┌──────────────────────────────────────────────┐          │
+│  │      Delegation Proof (space-proof.car)      │          │
+│  │    Grants upload capabilities to agent      │          │
+│  └──────────────────────────────────────────────┘          │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+                       │ UCAN Invocation
+                       ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Storacha Network                          │
+│                                                             │
+│  ┌────────────────────────────────────┐                    │
+│  │   1. Validate UCAN Proof           │                    │
+│  │   2. Verify Delegation Chain       │                    │
+│  │   3. Check Capabilities            │                    │
+│  └────────────────────────────────────┘                    │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+                       │ Store File
+                       ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Filecoin Storage                          │
+│              (Permanent, Decentralized)                     │
+│                                                             │
+│           Returns: CID (Content Identifier)                 │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### UCAN Authorization Flow
+
+```
+┌──────────────┐
+│  User Space  │  (Your Storacha namespace)
+│   (DID:key)  │
+└──────┬───────┘
+       │
+       │ Creates Delegation
+       │ (storacha space create)
+       ▼
+┌─────────────────────────────────────────┐
+│      UCAN Delegation Proof (.car)       │
+│                                         │
+│  Capabilities:                          │
+│  - space/blob/add                       │
+│  - store/add                            │
+│  - upload/add                           │
+│                                         │
+│  Audience: Backend Agent DID            │
+│  Expiration: Time-limited               │
+└──────────────┬──────────────────────────┘
+               │
+               │ Agent Reads Proof
+               ▼
+┌─────────────────────────────────────────┐
+│         Backend Agent                   │
+│   Authorized to Upload on Your Behalf  │
+└──────────────┬──────────────────────────┘
+               │
+               │ Invokes Upload
+               ▼
+┌─────────────────────────────────────────┐
+│       Storacha Network                  │
+│   Validates UCAN Chain & Executes       │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **React** | 18.3.1 | UI framework |
+| **TypeScript** | 5.5.3 | Type safety |
+| **Vite** | 5.4.2 | Build tool & dev server |
+| **Tailwind CSS** | 3.4.1 | Styling |
+| **Lucide React** | 0.344.0 | Icon library |
+
+### Backend (Separate Repository)
+
+| Technology | Purpose |
+|------------|---------|
+| **Node.js** | Runtime |
+| **Express** | Web framework |
+| **@storacha/client** | UCAN & Storacha integration |
+| **TypeScript** | Type safety |
+
+### Infrastructure
+
+- **Storacha Network**: UCAN-based storage gateway
+- **Filecoin**: Decentralized storage network
+- **IPFS**: Content addressing & retrieval
+
+---
+
+## 📁 Project Structure
 
 ```
 ucan-upload-wall/
- ├── server/
- │   ├── src/
- │   │   └── index.ts
- │   ├── package.json
- │   ├── tsconfig.json
- │   └── .env
- └── web/
+├── src/
+│   ├── components/
+│   │   ├── Alert.tsx           # Toast notifications
+│   │   ├── FileList.tsx        # Display uploaded files
+│   │   ├── Header.tsx          # App header
+│   │   └── UploadZone.tsx      # Drag & drop upload UI
+│   │
+│   ├── hooks/
+│   │   └── useFileUpload.ts    # Upload logic & state
+│   │
+│   ├── types/
+│   │   └── upload.ts           # TypeScript interfaces
+│   │
+│   ├── App.tsx                 # Main application
+│   ├── main.tsx                # Entry point
+│   └── index.css               # Global styles
+│
+├── public/                      # Static assets
+├── dist/                        # Production build
+│
+├── .env                         # Environment variables
+├── package.json                 # Dependencies
+├── tsconfig.json                # TypeScript config
+├── tailwind.config.js           # Tailwind config
+├── vite.config.ts               # Vite config
+└── README.md                    # This file
 ```
 
 ---
 
-## 🖥️ Server Setup
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** ≥ 18.x
+- **npm** or **yarn**
+- Backend server running on `http://localhost:8787`
+
+### Installation
+
+1. **Clone the repository**
 
 ```bash
-cd server
+git clone https://github.com/yourusername/ucan-upload-wall.git
+cd ucan-upload-wall
+```
+
+2. **Install dependencies**
+
+```bash
 npm install
+```
+
+3. **Set up environment variables**
+
+The project uses Supabase for potential data persistence (optional):
+
+```bash
+# .env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+4. **Start development server**
+
+```bash
 npm run dev
 ```
 
-**.env example:**
+The app will be available at `http://localhost:5173`
 
-```
-KEY=<your-agent-private-key>
-PROOF_B64=<your-delegation-proof-string>
-PORT=8787
-```
+### Backend Setup
 
-
-## 🧪 Test Upload
+This frontend requires a backend server. Refer to the backend repository for setup instructions:
 
 ```bash
-curl -X POST http://localhost:8787/api/upload
+# Backend setup (separate repo)
+cd ../server
+npm install
+npm run dev  # Runs on http://localhost:8787
 ```
-
-Expected response:
-
-```json
-{"ok": true, "cid": "bafybeigdg..."}
-```
-
-That CID is your uploaded file stored on Storacha, verified through UCAN authorization 🎉
 
 ---
 
-## 🧠 Architecture & Flow
+## 🔄 How It Works
 
-### 🔁 End-to-End Flow
+### 1. User Interaction
 
-1. **Space Creation:**
-   You create a Storacha space (`storacha space create`) that acts as your namespace for data.
+The user drags and drops a file or clicks to select one from their device.
 
-2. **UCAN Delegation:**
-   The space delegates upload permissions to your backend agent.
-   This creates a signed UCAN proof (`space-proof.car`).
+### 2. Frontend Preparation
 
-3. **Server Invocation:**
-   The backend reads that proof and uses `@storacha/client` to perform an authorized upload.
+The `useFileUpload` hook prepares the file and sends it to the backend via `FormData`:
 
-4. **Frontend Upload:**
-   The web client sends files to the backend’s `/api/upload` endpoint.
+```typescript
+const formData = new FormData();
+formData.append('file', file);
 
-5. **Verification:**
-   The backend’s UCAN proof is verified by the Storacha network before allowing the upload.
+const response = await fetch('http://localhost:8787/api/upload', {
+  method: 'POST',
+  body: formData,
+});
+```
 
-6. **File Storage:**
-   The file is stored on Filecoin (via Storacha), and a **content address (CID)** is returned.
+### 3. Backend Processing
 
-7. **Result Display:**
-   The frontend displays the CID, linking users directly to their uploaded file.
+The backend server:
+1. Receives the file
+2. Loads the UCAN delegation proof
+3. Creates a Storacha client with the proof
+4. Invokes the upload capability
+5. Returns the CID (Content Identifier)
+
+### 4. UCAN Validation
+
+Storacha Network validates:
+- The UCAN proof signature
+- The delegation chain
+- The requested capability (upload permission)
+- The proof expiration
+
+### 5. Storage
+
+If validated, the file is:
+- Stored on Filecoin
+- Assigned a unique CID
+- Made available via IPFS gateways
+
+### 6. Response
+
+The frontend receives the CID and:
+- Displays it in the file list
+- Provides copy and view options
+- Shows success notification
 
 ---
 
-### 🧭 Architecture Diagram
+## 📊 UCAN Flow Diagram
 
 ```mermaid
-graph TD
-  subgraph User
-    A[User Browser / Web App]
-  end
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant Backend
+    participant Storacha
+    participant Filecoin
 
-  subgraph Backend
-    B[Express Server]
-    B1[UCAN Proof (.car)]
-  end
-
-  subgraph Storacha
-    C[Storacha Network]
-    D[Filecoin Storage]
-  end
-
-  subgraph Identity
-    E[UCAN Agent (DID)]
-    F[Storacha Space (Namespace)]
-  end
-
-  A -->|Uploads File| B
-  B -->|Uses Proof| B1
-  B1 -->|Delegation Validation| C
-  C -->|UCAN Authorized Upload| D
-  D -->|Returns CID| C
-  C -->|Response| B
-  B -->|CID JSON| A
-
-  E -->|Delegation| F
-  F -->|Proof Stored| B1
+    User->>Frontend: Select/Drop File
+    Frontend->>Frontend: Validate File
+    Frontend->>Backend: POST /api/upload (FormData)
+    Backend->>Backend: Load UCAN Proof
+    Backend->>Backend: Initialize Storacha Client
+    Backend->>Storacha: Invoke Upload (with UCAN)
+    Storacha->>Storacha: Validate UCAN Chain
+    Storacha->>Storacha: Verify Capabilities
+    Storacha->>Filecoin: Store File
+    Filecoin-->>Storacha: Return CID
+    Storacha-->>Backend: Upload Success + CID
+    Backend-->>Frontend: { ok: true, cid: "bafybeig..." }
+    Frontend->>Frontend: Add to Upload List
+    Frontend->>User: Show Success + CID
 ```
 
+---
 
-## 🔑 Key Concepts
+## 🧩 Component Architecture
 
-| Concept         | Description                                                             |
-| --------------- | ----------------------------------------------------------------------- |
-| **UCAN**        | User-Controlled Authorization Network – capability-based access control |
-| **Delegation**  | A signed UCAN granting capabilities from one actor to another           |
-| **Agent**       | Entity with a keypair authorized to invoke UCAN-based operations        |
-| **Space**       | Your Storacha namespace where data lives                                |
-| **Proof (CAR)** | Encoded UCAN chain proving capability delegation                        |
+### Component Hierarchy
+
+```
+App
+├── Header
+├── UploadZone
+│   ├── Drag & Drop Area
+│   ├── File Preview
+│   └── Upload Button
+├── FileList
+│   └── FileCard (multiple)
+│       ├── File Info
+│       ├── CID Display
+│       ├── Copy Button
+│       └── View Link
+└── Alert (conditional)
+```
+
+### Component Responsibilities
+
+#### `App.tsx`
+- Main application state
+- Coordinates file uploads
+- Manages alert notifications
+- Passes data to child components
+
+#### `Header.tsx`
+- Displays app title and description
+- Consistent branding
+
+#### `UploadZone.tsx`
+- Handles drag & drop events
+- File selection UI
+- Upload trigger
+- Loading states
+
+#### `FileList.tsx`
+- Displays uploaded files
+- Shows CID with copy functionality
+- Provides IPFS gateway links
+- Formats file sizes and dates
+
+#### `Alert.tsx`
+- Toast notifications
+- Success/error messages
+- Auto-dismiss functionality
+
+#### `useFileUpload.ts`
+- Encapsulates upload logic
+- Manages upload state
+- Error handling
+- API communication
 
 ---
 
-## 🚀 Features
+## 🔌 API Integration
 
-* ✅ UCAN-based authentication (no bearer tokens)
-* ✅ Storacha client integration
-* ✅ Upload endpoint returning CIDs
-* ✅ TypeScript + Express backend
-* ✅ Frontend (Upload Wall UI)
+### Backend Endpoint
+
+**POST** `/api/upload`
+
+**Request:**
+```http
+POST http://localhost:8787/api/upload
+Content-Type: multipart/form-data
+
+file: [binary file data]
+```
+
+**Response (Success):**
+```json
+{
+  "ok": true,
+  "cid": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi"
+}
+```
+
+**Response (Error):**
+```json
+{
+  "ok": false,
+  "error": "Upload failed: Invalid UCAN proof"
+}
+```
+
+### IPFS Gateway Access
+
+Files can be accessed via:
+```
+https://w3s.link/ipfs/{CID}
+```
+
+Example:
+```
+https://w3s.link/ipfs/bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi
+```
 
 ---
 
-## 🧰 Roadmap
+## 💻 Development
 
-* [x] Backend UCAN-enabled upload
-* [ ] React frontend for uploads
-* [ ] List uploaded CIDs per space
-* [ ] Authentication via Storacha login
-* [ ] Deploy demo on Netlify + Render
+### Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript type checking |
+
+### Development Workflow
+
+1. **Start the backend server** (port 8787)
+2. **Start the frontend dev server** (`npm run dev`)
+3. **Make changes** - Vite provides hot module replacement
+4. **Type check** - `npm run typecheck`
+5. **Build** - `npm run build`
+
+### Environment Variables
+
+Create a `.env` file in the root:
+
+```bash
+# Supabase (optional - for data persistence)
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### Building for Production
+
+```bash
+npm run build
+```
+
+The optimized build will be in the `dist/` directory.
 
 ---
 
-## 🧑‍💻 Contributors
+## 🔒 Security
 
-| Name                                                   | Role                             |
-| ------------------------------------------------------ | -------------------------------- |
-| [**Fatuma Yattani**](https://github.com/Fatumayattani) | Lead Developer                   |
-| Storacha PLDG Community                                | UCAN Debugging & Tooling Support |
+### UCAN Benefits
+
+- **No API Keys in Frontend**: All authorization is handled via UCAN proofs on the backend
+- **Fine-Grained Permissions**: Delegate only specific capabilities (upload, read, etc.)
+- **Time-Limited**: UCAN proofs can expire
+- **Revocable**: Permissions can be revoked
+- **Cryptographically Secure**: Based on public-key cryptography
+
+### Best Practices
+
+1. **Never expose private keys** in the frontend
+2. **Keep UCAN proofs secure** on the backend
+3. **Validate all file uploads** before sending to backend
+4. **Use HTTPS** in production
+5. **Implement rate limiting** on the backend
+6. **Set appropriate CORS policies**
 
 ---
 
-## 🌍 Links
+## 🤝 Contributing
 
-* [Storacha Documentation](https://docs.storacha.network/concepts/ucan/)
-* [UCAN Specification](https://github.com/ucan-wg/spec)
-* [Storacha GitHub](https://github.com/storacha)
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+
+- Follow the existing code style
+- Write TypeScript with proper types
+- Test your changes thoroughly
+- Update documentation as needed
+- Keep components small and focused
 
 ---
 
-## 🪴 License
+## 📚 Resources
 
-MIT © 2025 [Fatuma Yattani](https://github.com/Fatumayattani)
+### UCAN & Storacha
 
+- [Storacha Documentation](https://docs.storacha.network/)
+- [UCAN Specification](https://github.com/ucan-wg/spec)
+- [Storacha GitHub](https://github.com/storacha)
+- [UCAN Working Group](https://github.com/ucan-wg)
 
+### Technologies
+
+- [React Documentation](https://react.dev/)
+- [Vite Documentation](https://vitejs.dev/)
+- [TypeScript Documentation](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [IPFS Documentation](https://docs.ipfs.tech/)
+- [Filecoin Documentation](https://docs.filecoin.io/)
+
+### Related Projects
+
+- [w3up](https://github.com/web3-storage/w3up) - Storacha client libraries
+- [ucanto](https://github.com/web3-storage/ucanto) - UCAN implementation
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 👥 Contributors
+
+| Name | Role | GitHub |
+|------|------|--------|
+| **Fatuma Yattani** | Lead Developer | [@Fatumayattani](https://github.com/Fatumayattani) |
+| Storacha PLDG Community | Support & Guidance | - |
+
+---
+
+## 🌟 Acknowledgments
+
+- **Storacha Team** for building an amazing UCAN-based storage platform
+- **UCAN Working Group** for the specification
+- **IPFS & Filecoin** communities for decentralized storage infrastructure
+- **React & Vite** teams for excellent developer tools
+
+---
+
+## 📧 Contact
+
+For questions, feedback, or support:
+
+- Open an issue on GitHub
+- Join the [Storacha Discord](https://discord.gg/storacha)
+- Follow [@Storacha on Twitter](https://twitter.com/storacha)
+
+---
+
+**Built with ❤️ using UCAN, React, and Storacha**
