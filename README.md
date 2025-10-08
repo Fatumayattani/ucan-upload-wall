@@ -376,15 +376,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **IPFS & Filecoin** communities for decentralized storage infrastructure
 - **React & Vite** teams for excellent developer tools
 
----
-
-## 📧 Contact
-
-For questions, feedback, or support:
-
-- Open an issue on GitHub
-- Join the [Storacha Discord](https://discord.gg/storacha)
-- Follow [@Storacha on Twitter](https://twitter.com/storacha)
-
----
-
