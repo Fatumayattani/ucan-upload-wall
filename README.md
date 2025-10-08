@@ -238,8 +238,7 @@ The project uses Supabase for potential data persistence (optional):
 
 ```bash
 # .env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
 ```
 
 4. **Start development server**
@@ -252,10 +251,9 @@ The app will be available at `http://localhost:5173`
 
 ### Backend Setup
 
-This frontend requires a backend server. Refer to the backend repository for setup instructions:
+This frontend requires a backend server.
 
 ```bash
-# Backend setup (separate repo)
 cd ../server
 npm install
 npm run dev  # Runs on http://localhost:8787
@@ -470,20 +468,7 @@ https://w3s.link/ipfs/bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzd
 Create a `.env` file in the root:
 
 ```bash
-# Supabase (optional - for data persistence)
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
-
-### Building for Production
-
-```bash
-npm run build
-```
-
-The optimized build will be in the `dist/` directory.
-
----
 
 ## 🔒 Security
 
@@ -585,4 +570,3 @@ For questions, feedback, or support:
 
 ---
 
-**Built with ❤️ using UCAN, React, and Storacha**
