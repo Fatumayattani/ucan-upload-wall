@@ -196,38 +196,48 @@ git clone https://github.com/Fatumayattani/ucan-upload-wall.git
 cd ucan-upload-wall
 ```
 
-2. **Install dependencies**
+### 2. Install dependencies
+
+Install all required packages for the frontend.
 
 ```bash
 npm install
 ```
 
-3. **Set up environment variables**
+---
 
-The project uses Supabase for potential data persistence (optional):
+### 3. Set up environment variables
+
+Create a `.env` file in the root directory of your backend project and add the following values.
+These connect your local server to your Storacha Space.
 
 ```bash
-# .env
-
+PORT=8080
+KEY=PASTE_THE_PRIVATE_KEY_FROM_key_create
+PROOF=PASTE_THE_BASE64_FROM_delegation_create
+SPACE_DID=PASTE_THE_SPACE_DID_FROM_space_create
 ```
 
-4. **Start development server**
+---
+
+### 4. Start the development servers
+
+First, run the frontend (from the `/web` folder):
 
 ```bash
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`
+This starts the UI on `http://localhost:5173`.
 
-### Backend Setup
-
-This frontend requires a backend server.
+Then, open a new terminal window and run the backend (from the `/server` folder):
 
 ```bash
-cd ../server
 npm install
-npm run dev  # Runs on http://localhost:8787
+npm run dev
 ```
+
+The backend will run on `http://localhost:8787`.
 
 ---
 
@@ -310,110 +320,6 @@ sequenceDiagram
     Frontend->>User: Show Success + CID
 ```
 
----
-
-## 🧩 Component Architecture
-
-### Component Hierarchy
-
-```
-App
-├── Header
-├── UploadZone
-│   ├── Drag & Drop Area
-│   ├── File Preview
-│   └── Upload Button
-├── FileList
-│   └── FileCard (multiple)
-│       ├── File Info
-│       ├── CID Display
-│       ├── Copy Button
-│       └── View Link
-└── Alert (conditional)
-```
-
-### Component Responsibilities
-
-#### `App.tsx`
-- Main application state
-- Coordinates file uploads
-- Manages alert notifications
-- Passes data to child components
-
-#### `Header.tsx`
-- Displays app title and description
-- Consistent branding
-
-#### `UploadZone.tsx`
-- Handles drag & drop events
-- File selection UI
-- Upload trigger
-- Loading states
-
-#### `FileList.tsx`
-- Displays uploaded files
-- Shows CID with copy functionality
-- Provides IPFS gateway links
-- Formats file sizes and dates
-
-#### `Alert.tsx`
-- Toast notifications
-- Success/error messages
-- Auto-dismiss functionality
-
-#### `useFileUpload.ts`
-- Encapsulates upload logic
-- Manages upload state
-- Error handling
-- API communication
-
----
-
-## 💻 Development
-
-### Available Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Run TypeScript type checking |
-
-### Development Workflow
-
-1. **Start the backend server** (port 8787)
-2. **Start the frontend dev server** (`npm run dev`)
-3. **Make changes** - Vite provides hot module replacement
-4. **Type check** - `npm run typecheck`
-5. **Build** - `npm run build`
-
-### Environment Variables
-
-Create a `.env` file in the root:
-
-```bash
-```
-
-## 🔒 Security
-
-### UCAN Benefits
-
-- **No API Keys in Frontend**: All authorization is handled via UCAN proofs on the backend
-- **Fine-Grained Permissions**: Delegate only specific capabilities (upload, read, etc.)
-- **Time-Limited**: UCAN proofs can expire
-- **Revocable**: Permissions can be revoked
-- **Cryptographically Secure**: Based on public-key cryptography
-
-### Best Practices
-
-1. **Never expose private keys** in the frontend
-2. **Keep UCAN proofs secure** on the backend
-3. **Validate all file uploads** before sending to backend
-4. **Use HTTPS** in production
-5. **Implement rate limiting** on the backend
-6. **Set appropriate CORS policies**
 
 ---
 
@@ -427,13 +333,6 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-### Development Guidelines
-
-- Follow the existing code style
-- Write TypeScript with proper types
-- Test your changes thoroughly
-- Update documentation as needed
-- Keep components small and focused
 
 ---
 
