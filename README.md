@@ -2,11 +2,6 @@
 
 A modern, decentralized file upload application powered by **User-Controlled Authorization Networks (UCANs)** and the **Storacha Network**. This project demonstrates how to build secure, token-free file storage using capability-based authorization instead of traditional API keys.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![React](https://img.shields.io/badge/react-18.3.1-61dafb.svg)
-![TypeScript](https://img.shields.io/badge/typescript-5.5.3-3178c6.svg)
-![Vite](https://img.shields.io/badge/vite-5.4.2-646cff.svg)
-
 ---
 
 ## 📋 Table of Contents
@@ -19,8 +14,6 @@ A modern, decentralized file upload application powered by **User-Controlled Aut
 - [How It Works](#how-it-works)
 - [UCAN Flow Diagram](#ucan-flow-diagram)
 - [Component Architecture](#component-architecture)
-- [Development](#development)
-- [Security](#security)
 - [Contributing](#contributing)
 - [Resources](#resources)
 - [License](#license)
